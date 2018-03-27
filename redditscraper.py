@@ -16,21 +16,21 @@ subreddit = reddit.subreddit('news')
 
 new = subreddit.new(limit = 5)
 
-for submission in new:
-    if not submission.stickied:
-        print('Title: {}, ups: {}, downs: {}, Have we visited?: {}'.format(submission.title,
-                                                                           submission.ups,
-                                                                           submission.downs,
-                                                                           submission.visited))
+def print_data():
+    for submission in new:
+        if not submission.stickied:
+            print('Title: {}, ups: {}, downs: {}, Have we visited?: {}'.format(submission.title,
+                                                                               submission.ups,
+                                                                               submission.downs,
+                                                                               submission.visited))
 
-        comments = {}
-        for top_level_comment in submission.comments:
-            if isinstance(top_level_comment, MoreComments):
-                continue
-            comments[top_level_comment] = top_level_comment.score
+            comments = {}
+            for top_level_comment in submission.comments:
+                if isinstance(top_level_comment, MoreComments):
+                    continue
+                comments[top_level_comment] = top_level_comment.score
 
-        top_comment_id = keywithmaxval(comments)
-        print(top_comment_id.body)
-        print(top_comment_id.score)
-
-f = open('')
+            top_comment_id = keywithmaxval(comments)
+            print(top_comment_id.body)
+            print(top_comment_id.score)
+            f = open('')
