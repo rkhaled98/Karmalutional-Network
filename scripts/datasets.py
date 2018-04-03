@@ -2,8 +2,7 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 import praw
 
-
-def clean_csv(file, print_sub_id=False, output_file=False):
+def clean_csv(file, print_sub_id = False, output_file = False):
     df = pd.read_csv(file)
     df[['7']].sub(df[['8']])  # subtract ups from downs
 
