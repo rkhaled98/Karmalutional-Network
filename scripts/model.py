@@ -60,7 +60,7 @@ def main():
 
 
 def create_model(input_shape, lstm_dim, embeddings):
-    # input pretrained Keras embeddings
+    # Input pretrained Keras embeddings, builds Keras model
     inputs = keras.Input(shape=input_shape, dtype='int32')
     inputs = embeddings(inputs)
     X = keras.layers.LSTM(lstm_dim, return_sequences=False)(inputs)
@@ -70,11 +70,12 @@ def create_model(input_shape, lstm_dim, embeddings):
     return model
 
 
-def train_model(epocs, batchSize, test):
+def train_model(epocs, batch_size, lstm_dim, test):
+    # Trains model and evaluates on test set if 'test' is true
     embeddings = # FUNCTION TO GENERATE EMBEDDINGS
-    model = create_model((longest,), 250, embeddings) # Longest =  longest word in vocabulary
+    model = create_model((longest,), lstm_dim, embeddings) # Longest =  longest word in vocabulary
     model.compile(loss='categoricalcrossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(X_train, Y_train, epocs=epocs, batch_size= batchsize, shuffle=True) # NEED TO SET UP TRAINING SETS
+    model.fit(X_train, Y_train, epocs=epocs, batch_size=batch_size, shuffle=True) # NEED TO SET UP TRAINING SETS
     if test:
         loss,acc = model.evaluate(X_test, Y_test) # NEED TO SET UP TEST SETS
         print(acc)
