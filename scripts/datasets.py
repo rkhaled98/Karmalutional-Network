@@ -2,6 +2,7 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 import praw
 
+
 def clean_csv(file, print_sub_id = False, output_file = False):
     df = pd.read_csv(file)
     df[['7']].sub(df[['8']])  # subtract ups from downs
@@ -26,9 +27,8 @@ def clean_csv(file, print_sub_id = False, output_file = False):
 
 def login(password): # login as username karmalutionalNetwork
     return praw.Reddit(client_id='wBnuJlXAeHDnKQ',
-                         client_secret='BE_SL0MrlgAtKktUGGFYI_RXtjc', password=password,
-                         user_agent='karmalutionalNetwork', username='karmalutionalNetwork')
-
+                       client_secret='BE_SL0MrlgAtKktUGGFYI_RXtjc', password=password,
+                       user_agent='karmalutionalNetwork', username='karmalutionalNetwork')
 
 
 def convert_comment_id_to_submission_id(comment_id, reddit): # attempt to get thread id

@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 from tensorflow import keras
+from scripts import datasets
 import os
-
 
 def get_input_df_with_labels(file):
     # file is a file which has already been parsed by datasets.py to contain a csv
@@ -46,17 +46,31 @@ def get_single_classifier_for_score(score, all_scores, TOP = 90, GOOD = 75, NEUT
 
 #iteration = 1
 
+def train_test_sets(df, pct):
+    train_index = df.shape[0] * pct
+
+    train = df[:train_index]
+    test = df[train_index:]
+
+    X_train = train.iloc[:, [0]]
+    X_test = test.iloc[:, [0]]
+
+    Y_train = train.iloc[:, [1]]
+    Y_test = test.iloc[:,[1]]
+
+    x_y_train_test = {'X_train:': X_train, 'X_test': X_test, 'Y_train': Y_train, 'Y_test': Y_test}
+
+    return x_y_train_test
+
 
 def read_file_in_cwd_and_pass_to_get_input_df_with_labels():
     # to be used in conjunction with get_input_df_with_labels in the case when the
     # user wishes to specify a file in their cwd to read in for the file param
     # in get_input_df_with_labels
     file_name = input("enter name of file to read: ")
-    get_input_df_with_labels(os.getcwd() + '/' + file_name)
-
-
-def main():
-    read_file_in_cwd_and_pass_to_get_input_df_with_labels()
+    df = get_input_df_with_labels(os.getcwd() + '/' + file_name)
+    inputs = train_test_sets(df, 0.9)
+    train_model(inputs, epocs=, batchsize=, lstm_dim=, test=True)
 
 
 def create_model(input_shape, lstm_dim, embeddings):
@@ -70,15 +84,19 @@ def create_model(input_shape, lstm_dim, embeddings):
     return model
 
 
-def train_model(epocs, batch_size, lstm_dim, test):
+def train_model(inputs, epocs, batch_size, lstm_dim, test):
     # Trains model and evaluates on test set if 'test' is true
     embeddings = # FUNCTION TO GENERATE EMBEDDINGS
+
     model = create_model((longest,), lstm_dim, embeddings) # Longest =  longest word in vocabulary
     model.compile(loss='categoricalcrossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(X_train, Y_train, epocs=epocs, batch_size=batch_size, shuffle=True) # NEED TO SET UP TRAINING SETS
+    model.fit(inputs['X_train'], inputs['Y_train'], epocs=epocs, batch_size=batch_size, shuffle=True) # NEED TO SET UP TRAINING SETS
     if test:
-        loss,acc = model.evaluate(X_test, Y_test) # NEED TO SET UP TEST SETS
+        loss,acc = model.evaluate(inputs['X_test'], inputs['Y_test'])# NEED TO SET UP TEST SETS
         print(acc)
 
+def main():
+    read_file_in_cwd_and_pass_to_get_input_df_with_labels()
 
-main()
+if __name__  == "__main__":
+    main()
