@@ -3,6 +3,10 @@ import xml.etree.ElementTree as ET
 import praw
 import numpy as np
 import os
+import seaborn as sns
+import matplotlib.pyplot as plt
+#from sklearn.cluster import KMeans
+
 
 
 def clean_csv(file, print_sub_id = False, output_file = False):
@@ -105,3 +109,30 @@ def convert_comment_id_to_submission_id(comment_id, reddit): # attempt to get th
         return submission_id
     except Exception as e:
         return "fail"
+
+def plot_data(file):
+    df = clean_csv(file)
+    sns.set_style("whitegrid")
+    ax = plt.subplot(111)
+    ax = sns.violinplot(x=df["score"])
+    ax.set_xlim([0, 1200])
+    plt.show()
+
+    #km = KMeans()
+    #km.fit(df["score"].reshape(-1,1))
+
+    print(df)
+    '''
+    df = clean_csv(file)
+    df = df.loc[:, ['score']]
+    sns.set_style("whitegrid")
+    sns.violinplot(data=df)
+    ax1 = plt.subplot()
+    #total = [data[x] for x in data]
+    #ylim_max = np.percentile(total, 97.5)
+    #ax1.set_ylim([0, ylim_max])
+    plt.show()
+    print(df)
+    '''
+
+plot_data('./news_news.csv')
