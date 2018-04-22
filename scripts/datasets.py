@@ -4,6 +4,10 @@ import praw
 import numpy as np
 import matplotlib
 import os
+import seaborn as sns
+import matplotlib.pyplot as plt
+#from sklearn.cluster import KMeans
+
 
 
 def clean_csv(file, print_sub_id = False, output_file = False):
@@ -25,17 +29,17 @@ def clean_csv(file, print_sub_id = False, output_file = False):
         f = open(str(file.replace(".csv", ".out")), 'w')
         f.write(df.to_csv())
 
+    print(df)
     return df
 
 
-def get_input_df_with_labels(file):
-    # file is a file which has already been parsed by datasets.py to contain a csv
+def get_input_df_with_labels(df):
+    # the df above was already parsed with clean_csv...
     # with the format ,comment,id,score.
     # the output return of this function is a DataFrame which represents the
     # same csv as the input, but with additional column at the end representing
     # the classified representation of the score using function get_single_classifier_for_score
-    df = pd.read_csv(file)
-    df = df.iloc[:, [1, 3, 2]] # order by comment,score,id (1,3,2)
+    df = df.loc[:, ['comment', 'score']] # order by comment,score
     df['rank'] = df.score.apply(lambda score: get_single_classifier_for_score(score, df.score))
     print(df)
     return df
@@ -71,17 +75,17 @@ def get_single_classifier_for_score(score, all_scores, TOP = 90, GOOD = 75, NEUT
 #iteration = 1
 
 
-def train_test_sets(df, pct):
+def train_test_sets(df, pct): #pct is cutoff point for train | test
     train_index = df.shape[0] * pct
 
     train = df[:train_index]
     test = df[train_index:]
 
-    X_train = train.iloc[:, [0]]
-    X_test = test.iloc[:, [0]]
+    X_train = train.loc[:, ['comment']]
+    X_test = test.loc[:, ['comment']]
 
-    Y_train = train.iloc[:, [1]]
-    Y_test = test.iloc[:, [1]]
+    Y_train = train.iloc[:, ['rank']]
+    Y_test = test.iloc[:, ['rank']]
 
     x_y_train_test = {'X_train:': X_train, 'X_test': X_test, 'Y_train': Y_train, 'Y_test': Y_test}
 
@@ -93,9 +97,9 @@ def plot_pints(df):
 
 
 def get_sets(file):
-    df = clean_csv(file, print_sub_id=False, output_file=False)
+    df = clean_csv(file)
     df = get_input_df_with_labels(df)
-    return train_test_sets(df, 0.9)
+    return train_test_sets(df, 0.9) #90 percent train
 
 
 def login(password): # login as username karmalutionalNetwork
@@ -111,7 +115,29 @@ def convert_comment_id_to_submission_id(comment_id, reddit): # attempt to get th
     except Exception as e:
         return "fail"
 
+def plot_data(file):
+    df = clean_csv(file)
+    sns.set_style("whitegrid")
+    ax = plt.subplot(111)
+    ax = sns.violinplot(x=df["score"])
+    ax.set_xlim([0, 1200])
+    plt.show()
 
+    #km = KMeans()
+    #km.fit(df["score"].reshape(-1,1))
 
+    print(df)
+    '''
+    df = clean_csv(file)
+    df = df.loc[:, ['score']]
+    sns.set_style("whitegrid")
+    sns.violinplot(data=df)
+    ax1 = plt.subplot()
+    #total = [data[x] for x in data]
+    #ylim_max = np.percentile(total, 97.5)
+    #ax1.set_ylim([0, ylim_max])
+    plt.show()
+    print(df)
+    '''
 
-
+plot_data('./news_news.csv')
