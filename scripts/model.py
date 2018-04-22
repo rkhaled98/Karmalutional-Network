@@ -17,7 +17,7 @@ def create_model(input_shape, lstm_dim, embeddings):
     inputs = keras.Input(shape=input_shape, dtype='int32')
     inputs = embeddings(inputs)
     X = keras.layers.LSTM(lstm_dim, return_sequences=False)(inputs)
-    X = keras.layers.Activation('softmax')(X)
+    X = keras.layers.Activation('sigmoid')(X)
 
     model = keras.Model(inputs=inputs, outputs=X)
     return model

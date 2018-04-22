@@ -2,6 +2,7 @@ import pandas as pd
 import xml.etree.ElementTree as ET
 import praw
 import numpy as np
+import matplotlib
 import os
 
 
@@ -85,6 +86,10 @@ def train_test_sets(df, pct):
     x_y_train_test = {'X_train:': X_train, 'X_test': X_test, 'Y_train': Y_train, 'Y_test': Y_test}
 
     return x_y_train_test
+
+
+def plot_pints(df):
+    matplotlib.plot(df.iloc[1])
 
 
 def get_sets(file):
