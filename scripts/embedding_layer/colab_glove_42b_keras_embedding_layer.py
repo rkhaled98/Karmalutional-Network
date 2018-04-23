@@ -11,7 +11,6 @@ import numpy as np
 from tensorflow import keras
 from google.colab import files
 
-!ls
 
 #note: this causes the environment to crash and restart with such a huge file. for now, we are just using wget instead of Google Drive.
 #wget is surprisingly fast for this task, possibly moreso than Google Drive would be.
