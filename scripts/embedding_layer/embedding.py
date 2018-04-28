@@ -8,6 +8,8 @@ Original file is located at
 """
 
 import numpy as np
+import os
+import pathlib
 from tensorflow import keras
 # from google.colab import files
 
@@ -78,9 +80,13 @@ def comment_to_index(comments, max_len):
 
     return indices
 
+
 # generates a Keras embedding layer, inspired by Emojify in Andrew Ng's Sequence Models Coursera course
 def gen_embedding_layer():
-    create_word_to_dicts('/Users/Colby/Code/Machine-Learning/Karmalutional-Network/data/glovetest.txt')
+    path = os.path.dirname(os.path.abspath(__file__))
+    path = str(pathlib.PurePath(path).parent.parent)
+    path += "/data/glove.42B.300d.txt"
+    create_word_to_dicts(path)
     print("gen_embedding_layer\n")
     input_size = len(word_to_index) + 1  # Keras requires this to be the vocab size + 1
     output_size = word_to_vector["the"].shape[0]
@@ -89,13 +95,10 @@ def gen_embedding_layer():
     for word, index in word_to_index.items():
         embedding_matrix[index, :] = word_to_vector[word]
 
-    for i in embedding_matrix:
-        print("{}\n".format(i))
-
     layer = keras.layers.Embedding(input_size, output_size, trainable=False)
     layer.build((None,))
     layer.set_weights([embedding_matrix])
-    return layer, input_size
+    return layer
 
 
 #gen_embedding_layer()
