@@ -1,13 +1,9 @@
 import pandas as pd
-import xml.etree.ElementTree as ET
 import praw
 import numpy as np
 import matplotlib
-import os
 import seaborn as sns
 import matplotlib.pyplot as plt
-#from sklearn.cluster import KMeans
-
 
 
 def clean_csv(file, print_sub_id = False, output_file = False):
@@ -29,7 +25,6 @@ def clean_csv(file, print_sub_id = False, output_file = False):
         f = open(str(file.replace(".csv", ".out")), 'w')
         f.write(df.to_csv())
 
-    print(df)
     return df
 
 
@@ -40,9 +35,17 @@ def get_input_df_with_labels(df):
     # same csv as the input, but with additional column at the end representing
     # the classified representation of the score using function get_single_classifier_for_score
     df = df.loc[:, ['comment', 'score']] # order by comment,score
-    df['rank'] = df.score.apply(lambda score: get_single_classifier_for_score(score, df.score))
-    print(df)
+    #df['rank'] = df.score.apply(lambda score: get_single_classifier_for_score(score, df.score))
+    df['rank'] = df.score.apply(lambda score: get_percentile_for_score(score, df.score))
     return df
+
+
+def get_percentile_for_score(score, all_scores):
+    i = 90
+    while i != 10:
+        if score > np.percentile(all_scores, i):
+            return i
+        i -= 10
 
 
 def get_single_classifier_for_score(score, all_scores, TOP = 90, GOOD = 75, NEUTRAL = 50, BAD = 35, TERRIBLE = 20):
@@ -54,10 +57,10 @@ def get_single_classifier_for_score(score, all_scores, TOP = 90, GOOD = 75, NEUT
     # specified by the input parameters TOP, GOOD, NEUTRAL, BAD, AND TERRIBLE.
     # there are placeholder values provided, however these parameters should be changed
     # to lower arbitrariness of the chosen values.
-    #global iteration
-    #iteration += 1
+    # global iteration
+    # iteration += 1
     if score > np.percentile(all_scores, TOP):
-        print('top') #+ str(iteration))
+        print('top') # + str(iteration))
         return [1,0,0,0,0]
     elif score > np.percentile(all_scores, GOOD):
         print('good')# + str(iteration))
@@ -75,19 +78,19 @@ def get_single_classifier_for_score(score, all_scores, TOP = 90, GOOD = 75, NEUT
 #iteration = 1
 
 
-def train_test_sets(df, pct): #pct is cutoff point for train | test
-    train_index = df.shape[0] * pct
+def train_test_sets(df, pct): # pct is cutoff point for train | test
+    train_index = round(df.shape[0] * pct)
 
     train = df[:train_index]
     test = df[train_index:]
 
-    X_train = train.loc[:, ['comment']]
-    X_test = test.loc[:, ['comment']]
+    X_train = train[['comment']]
+    X_test = test[['comment']]
 
-    Y_train = train.iloc[:, ['rank']]
-    Y_test = test.iloc[:, ['rank']]
+    Y_train = train[['rank']]
+    Y_test = test[['rank']]
 
-    x_y_train_test = {'X_train:': X_train, 'X_test': X_test, 'Y_train': Y_train, 'Y_test': Y_test}
+    x_y_train_test = {'X_train': X_train, 'X_test': X_test, 'Y_train': Y_train, 'Y_test': Y_test}
 
     return x_y_train_test
 
@@ -140,4 +143,4 @@ def plot_data(file):
     print(df)
     '''
 
-plot_data('./news_news.csv')
+#plot_data('./news_news.csv')
