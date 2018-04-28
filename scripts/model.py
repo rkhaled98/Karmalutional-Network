@@ -32,12 +32,16 @@ def create_model(input_shape, lstm_dim, embeddings):
 def train_model(inputs, epocs, batch_size, lstm_dim, test):
     # Trains model and evaluates on test set if 'test' is true
     embeddings, longest = embedding.gen_embedding_layer()
-    model = create_model((longest,), lstm_dim, embeddings) # Longest =  longest word in vocabulary
+    model = create_model((longest,), lstm_dim, embeddings)
+
     print("compiling and fitting\n")
     model.compile(loss='categoricalcrossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(inputs['X_train'], inputs['Y_train'], epocs=epocs, batch_size=batch_size, shuffle=True) # NEED TO SET UP TRAINING SETS
+
+    x_train_indices = embedding.comment_to_index(inputs['X_train'], max_len=100)
+    model.fit(x_train_indices, inputs['Y_train'], epocs=epocs, batch_size=batch_size, shuffle=True)
     if test:
-        loss, acc = model.evaluate(inputs['X_test'], inputs['Y_test'])# NEED TO SET UP TEST SETS
+        x_test_indices = embedding.comment_to_index(inputs['X_test'], max_len=100)
+        loss, acc = model.evaluate(inputs['X_test'], inputs['Y_test'])
         print(acc)
 
 
