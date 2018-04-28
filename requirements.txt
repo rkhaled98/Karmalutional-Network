@@ -1,0 +1,8 @@
+numpy
+tensorflow
+pandas
+praw
+matplotlib
+seaborn
+matplotlib
+
