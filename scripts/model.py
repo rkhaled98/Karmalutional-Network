@@ -44,7 +44,7 @@ def train_model(inputs, epocs, batch_size, lstm_dim, test):
     model.fit(x_train_indices, inputs['Y_train'], epocs=epocs, batch_size=batch_size, shuffle=True)
     if test:
         x_test_indices = embedding.comment_to_index(inputs['X_test'], max_len=100)
-        loss, acc = model.evaluate(inputs['X_test'], inputs['Y_test'])
+        loss, acc = model.evaluate(x_test_indices, inputs['Y_test'])
         print(acc)
 
 
