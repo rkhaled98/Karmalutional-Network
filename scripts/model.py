@@ -2,6 +2,7 @@ from tensorflow import keras
 from scripts import datasets
 from scripts.embedding_layer import embedding
 import os
+import pathlib
 
 
 # def run_model_from_file_input():
@@ -17,25 +18,27 @@ def run_model_from_file(file):
     train_model(inputs, epocs=32, batch_size=50, lstm_dim=128, test=True)
 
 
-def create_model(input_shape, lstm_dim, embeddings):
+def create_model(lstm_dim, embeddings):
     # Input pretrained Keras embeddings, builds Keras model
-    inputs = keras.Input(shape=input_shape, dtype='int32')
-    inputs = embeddings(inputs)
-    X = keras.layers.LSTM(lstm_dim, return_sequences=False)(inputs)
+    print("Model Starting\n")
+    inputs = keras.Input(shape=(50,), dtype='int32')
+    embeddings = embeddings(inputs)
+    X = keras.layers.LSTM(lstm_dim, return_sequences=False)(embeddings)
     X = keras.layers.Activation('sigmoid')(X)
 
     model = keras.Model(inputs=inputs, outputs=X)
-    print("model made\n")
+    model.summary()
     return model
 
 
 def train_model(inputs, epocs, batch_size, lstm_dim, test):
     # Trains model and evaluates on test set if 'test' is true
-    embeddings, longest = embedding.gen_embedding_layer()
-    model = create_model((longest,), lstm_dim, embeddings)
+    print("trian model starting\n")
+    embeddings = embedding.gen_embedding_layer()
+    model = create_model(lstm_dim, embeddings)
 
     print("compiling and fitting\n")
-    model.compile(loss='categoricalcrossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     x_train_indices = embedding.comment_to_index(inputs['X_train'], max_len=100)
     model.fit(x_train_indices, inputs['Y_train'], epocs=epocs, batch_size=batch_size, shuffle=True)
@@ -46,7 +49,10 @@ def train_model(inputs, epocs, batch_size, lstm_dim, test):
 
 
 def main():
-    run_model_from_file("/Users/Colby/Code/Machine-Learning/Karmalutional-Network/data/news_first50.csv")
+    path = os.path.dirname(os.path.abspath(__file__))
+    path = str(pathlib.PurePath(path).parent)
+    path += "/data/news_first50.csv"
+    run_model_from_file(path)
 
 
 if __name__ == "__main__":

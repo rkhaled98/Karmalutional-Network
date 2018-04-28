@@ -28,6 +28,13 @@ def clean_csv(file, print_sub_id = False, output_file = False):
     return df
 
 
+# def get_max_comment_length(df):
+#     count = df['comment'].str.split().str.len().max()
+#     print(count)
+#     count.index = count.index.astype(str) + ' words:'
+#     return count
+
+
 def get_input_df_with_labels(df):
     # the df above was already parsed with clean_csv...
     # with the format ,comment,id,score.
@@ -102,7 +109,7 @@ def plot_pints(df):
 def get_sets(file):
     df = clean_csv(file)
     df = get_input_df_with_labels(df)
-    return train_test_sets(df, 0.9) #90 percent train
+    return train_test_sets(df, 0.9)  #90 percent train
 
 
 def login(password): # login as username karmalutionalNetwork
