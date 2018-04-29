@@ -107,6 +107,7 @@ def plot_pints(df):
 
 
 def get_sets(file):
+    print("get_sets..")
     df = clean_csv(file)
     df = get_input_df_with_labels(df)
     return train_test_sets(df, 0.9)  #90 percent train
