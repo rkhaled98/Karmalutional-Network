@@ -1,6 +1,6 @@
 from tensorflow import keras
 from scripts import datasets
-from scripts.embedding_layer import embedding
+from scripts import embedding
 import os
 import pathlib
 
