@@ -85,7 +85,7 @@ def comment_to_index(comments, max_len):
 def gen_embedding_layer():
     path = os.path.dirname(os.path.abspath(__file__))
     path = str(pathlib.PurePath(path).parent)
-    path += "/data/glove.42B.300d.txt"
+    path += "Karmalutional-Network/data/glove.42B.300d.txt"
     create_word_to_dicts(path)
     print("gen_embedding_layer\n")
     input_size = len(word_to_index) + 1  # Keras requires this to be the vocab size + 1
