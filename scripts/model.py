@@ -1,6 +1,6 @@
 from tensorflow import keras
-from scripts import datasets
-from scripts import embedding
+import datasets
+import embedding
 import os
 import pathlib
 
@@ -14,7 +14,7 @@ import pathlib
 #     train_model(inputs, epocs=None, batch_size=None, lstm_dim=None, test=True)
 
 def run_model_from_file(file):
-    inputs = datasets.get_sets(file)
+    inputs = datasets.get_sets_from_out(file)
     train_model(inputs, epocs=32, batch_size=50, lstm_dim=128, test=True)
 
 
@@ -51,7 +51,7 @@ def train_model(inputs, epocs, batch_size, lstm_dim, test):
 def main():
     path = os.path.dirname(os.path.abspath(__file__))
     path = str(pathlib.PurePath(path).parent)
-    path += "/data/news_first50.csv"
+    path += "/data/news_news.out"
     run_model_from_file(path)
 
 

@@ -11,6 +11,7 @@ import numpy as np
 import os
 import pathlib
 from tensorflow import keras
+import pickle
 # from google.colab import files
 
 # note: this causes the environment to crash and restart with such a huge file. for now, we are just using wget instead of Google Drive.
@@ -53,7 +54,6 @@ word_to_vector = {}  # not to be confused with word2vec
 
 # open the file:
 def create_word_to_dicts(file):
-    print(file)
     with open(file) as f:
         print("gen embeddings\n")
         i = 0
@@ -100,7 +100,9 @@ def gen_embedding_layer():
     layer = keras.layers.Embedding(input_size, output_size, trainable=False)
     layer.build((None,))
     layer.set_weights([embedding_matrix])
+    with open('layer.pickle', 'wb') as handle:
+        pickle.dump(layer, handle, protocol=pickle.HIGHEST_PROTOCOL)
     return layer
 
 
-#gen_embedding_layer()
+gen_embedding_layer()
