@@ -1,8 +1,10 @@
 from tensorflow import keras
-import datasets
-import embedding
+from scripts import datasets
+from scripts import embedding
+import tensorflow as tf
 import os
-import pathlib
+from pathlib import Path
+import pickle
 
 
 # def run_model_from_file_input():
@@ -14,7 +16,11 @@ import pathlib
 #     train_model(inputs, epocs=None, batch_size=None, lstm_dim=None, test=True)
 
 def run_model_from_file(file):
-    inputs = datasets.get_sets_from_out(file)
+    if file.split('.')[1] == "pickle":
+        with open(file, 'rb') as f:
+            inputs = pickle.load(f)
+    else:
+        inputs = datasets.get_sets_from_out(file)
     train_model(inputs, epocs=32, batch_size=50, lstm_dim=128, test=True)
 
 
@@ -33,7 +39,7 @@ def create_model(lstm_dim, embeddings):
 
 def train_model(inputs, epocs, batch_size, lstm_dim, test):
     # Trains model and evaluates on test set if 'test' is true
-    print("trian model starting\n")
+    print("train model starting\n")
     embeddings = embedding.gen_embedding_layer()
     model = create_model(lstm_dim, embeddings)
 
@@ -49,10 +55,8 @@ def train_model(inputs, epocs, batch_size, lstm_dim, test):
 
 
 def main():
-    path = os.path.dirname(os.path.abspath(__file__))
-    path = str(pathlib.PurePath(path).parent)
-    path += "/data/news_news.out"
-    run_model_from_file(path)
+    path = Path.cwd() / "scripts/layer.pickle"
+    run_model_from_file(str(path))
 
 
 if __name__ == "__main__":
