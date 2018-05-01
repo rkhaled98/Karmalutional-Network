@@ -9,9 +9,9 @@ Original file is located at
 
 import numpy as np
 import os
-import pathlib
-from tensorflow import keras
 import pickle
+from pathlib import Path
+from tensorflow import keras
 # from google.colab import files
 
 # note: this causes the environment to crash and restart with such a huge file. for now, we are just using wget instead of Google Drive.
@@ -52,6 +52,7 @@ from googleapiclient.http import MediaIoBaseDownload
 word_to_index = {}
 word_to_vector = {}  # not to be confused with word2vec
 
+
 # open the file:
 def create_word_to_dicts(file):
     with open(file) as f:
@@ -84,9 +85,8 @@ def comment_to_index(comments, max_len):
 
 # generates a Keras embedding layer, inspired by Emojify in Andrew Ng's Sequence Models Coursera course
 def gen_embedding_layer():
-    path = os.path.dirname(os.path.abspath(__file__))
-    path = str(pathlib.PurePath(path).parent)
-    path += "/data/glove.42B.300d.txt"
+    setattr(keras.layers.Embedding, '__deepcopy__', lambda self, _: self)
+    path = Path.cwd().parent / "data/glove.42b.300d.txt"
     # path = "/content/Karmalutional-Network/data/glove.42B.300d.txt" - for the notebook
     create_word_to_dicts(path)
     print("gen_embedding_layer\n")
@@ -105,4 +105,3 @@ def gen_embedding_layer():
     return layer
 
 
-gen_embedding_layer()
