@@ -43,12 +43,13 @@ def get_input_df_with_labels(df, file, output_file=True):
     if output_file: # if executed, write DataFrame to new csv file
         f = open(str(file.replace(".csv", ".out")), 'w')
         f.write(df.to_csv())
+        f.close()
     return df
 
 
 def get_percentile_for_score(score, all_scores):
     i = 90
-    while i != 10:
+    while i != -10:
         if score > np.percentile(all_scores, i):
             return i
         i -= 10
@@ -106,16 +107,14 @@ def plot_pints(df):
 
 
 def get_sets(file):
-    print("get_sets..")
-    df = clean_csv(file)
-    df = get_input_df_with_labels(df, file)
+    print("get sets")
+    if file.split('.')[1] == "out":
+        print("out")
+        df = pd.read_csv(file)
+    else:
+        df = clean_csv(file)
+        df = get_input_df_with_labels(df, file)
     return train_test_sets(df, 0.9)  #90 percent train
-
-
-def get_sets_from_out(file):
-    print("get_sets...")
-    df = pd.read_csv(file)
-    return train_test_sets(df, 0.9)
 
 
 def login(password): # login as username karmalutionalNetwork

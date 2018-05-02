@@ -20,13 +20,13 @@ def run_model_from_file(file):
         with open(file, 'rb') as f:
             inputs = pickle.load(f)
     else:
-        inputs = datasets.get_sets_from_out(file)
+        inputs = datasets.get_sets(file)
     train_model(inputs, epocs=32, batch_size=50, lstm_dim=128, test=True)
 
 
 def create_model(lstm_dim, embeddings):
     # Input pretrained Keras embeddings, builds Keras model
-    print("Model Starting\n")
+    print("model starting\n")
     inputs = keras.Input(shape=(50,), dtype='int32')
     embeddings = embeddings(inputs)
     X = keras.layers.LSTM(lstm_dim, return_sequences=False)(embeddings)
@@ -43,19 +43,21 @@ def train_model(inputs, epocs, batch_size, lstm_dim, test):
     embeddings = embedding.gen_embedding_layer()
     model = create_model(lstm_dim, embeddings)
 
-    print("compiling and fitting\n")
+    print("compiling\n")
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    x_train_indices = embedding.comment_to_index(inputs['X_train'], max_len=100)
-    model.fit(x_train_indices, inputs['Y_train'], epocs=epocs, batch_size=batch_size, shuffle=True)
+    x_train_indices = embedding.comment_to_index(inputs['X_train'], max_len=200)
+    print("fitting\n")
+    model.fit(x_train_indices, inputs['Y_train'], epochs=epocs, batch_size=batch_size, verbose=1, shuffle=True)
     if test:
-        x_test_indices = embedding.comment_to_index(inputs['X_test'], max_len=100)
+        print("testing\n")
+        x_test_indices = embedding.comment_to_index(inputs['X_test'], max_len=200)
         loss, acc = model.evaluate(x_test_indices, inputs['Y_test'])
         print(acc)
 
 
 def main():
-    path = Path.cwd() / "scripts/layer.pickle"
+    path = Path.cwd() / "data/news_news.out"
     run_model_from_file(str(path))
 
 
