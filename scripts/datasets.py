@@ -51,7 +51,7 @@ def get_percentile_for_score(score, all_scores):
     i = 90
     while i != -10:
         if score > np.percentile(all_scores, i):
-            return i
+            return i / 100
         i -= 10
 
 

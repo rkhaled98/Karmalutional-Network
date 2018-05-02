@@ -68,6 +68,8 @@ def create_word_to_dicts(file):
             # word_to_vector[word] = weights
             # word_to_index[word] = i
             i += 1  # no ++ in python
+        weight_shape = word_to_vec_idx["the"][0].shape
+        word_to_vec_idx["unk"] = [np.zeros(weight_shape), i]
 
 
 def comment_to_index(comments, max_len):
@@ -81,13 +83,11 @@ def comment_to_index(comments, max_len):
         for word in comment_words:
             try:
                 indices[i, j] = word_to_vec_idx[word][1]
-            except IndexError:
-                break
-            except KeyError:
+            except (KeyError, IndexError):
                 try:
-                    indices[i, j] = -1
+                    indices[i, j] = word_to_vec_idx["unk"][1]
                 except IndexError:
-                    break
+                    continue
             j += 1
 
     return indices
@@ -95,7 +95,7 @@ def comment_to_index(comments, max_len):
 
 # generates a Keras embedding layer, inspired by Emojify in Andrew Ng's Sequence Models Coursera course
 def gen_embedding_layer():
-    path = Path.cwd() / "data/glovetest.txt"
+    path = Path.cwd() / "data/glove.42B.300d.txt"
     # path = "/content/Karmalutional-Network/data/glove.42B.300d.txt" - for the notebook
     create_word_to_dicts(path)
     print("gen_embedding_layer\n")
@@ -103,6 +103,7 @@ def gen_embedding_layer():
     output_size = word_to_vec_idx["the"][0].shape[0]
 
     embedding_matrix = np.zeros((input_size, output_size))
+
     for word, lst in word_to_vec_idx.items():
         index = lst[1]
         embedding_matrix[index, :] = word_to_vec_idx[word][0]
