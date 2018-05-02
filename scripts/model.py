@@ -27,9 +27,10 @@ def run_model_from_file(file):
 def create_model(lstm_dim, embeddings):
     # Input pretrained Keras embeddings, builds Keras model
     print("model starting\n")
-    inputs = keras.Input(shape=(50,), dtype='int32')
+    inputs = keras.Input(shape=(200,), dtype='int32')
     embeddings = embeddings(inputs)
     X = keras.layers.LSTM(lstm_dim, return_sequences=False)(embeddings)
+    X = keras.layers.Dense(1)(X)
     X = keras.layers.Activation('sigmoid')(X)
 
     model = keras.Model(inputs=inputs, outputs=X)
@@ -44,11 +45,11 @@ def train_model(inputs, epocs, batch_size, lstm_dim, test):
     model = create_model(lstm_dim, embeddings)
 
     print("compiling\n")
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
     x_train_indices = embedding.comment_to_index(inputs['X_train'], max_len=200)
     print("fitting\n")
-    model.fit(x_train_indices, inputs['Y_train'], epochs=epocs, batch_size=batch_size, verbose=1, shuffle=True)
+    model.fit(x_train_indices, inputs['Y_train']['rank'], epochs=epocs, batch_size=batch_size, verbose=1, shuffle=True)
     if test:
         print("testing\n")
         x_test_indices = embedding.comment_to_index(inputs['X_test'], max_len=200)
