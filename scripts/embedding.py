@@ -49,8 +49,9 @@ from googleapiclient.http import MediaIoBaseDownload
 # files = files.upload()
 # Inspired by https://github.com/keras-team/keras/blob/master/examples/pretrained_word_embeddings.py
 # and the Emojify exercise from Andrew Ng's course on sequence models
-word_to_index = {}
-word_to_vector = {}  # not to be confused with word2vec
+# word_to_index = {}
+# word_to_vector = {}  # not to be confused with word2vec
+word_to_vec_idx = {}
 
 
 # open the file:
@@ -63,8 +64,9 @@ def create_word_to_dicts(file):
             word = split_line[0]
             weights = np.asarray(split_line[1:])
             # store the weight vector at the appropriate index:
-            word_to_vector[word] = weights
-            word_to_index[word] = i
+            word_to_vec_idx[word] = [weights, i]
+            # word_to_vector[word] = weights
+            # word_to_index[word] = i
             i += 1  # no ++ in python
 
 
@@ -74,10 +76,18 @@ def comment_to_index(comments, max_len):
     indices = np.zeros((m, max_len))
 
     for i in range(m):
-        comment_words = comments[i].lower().split()
+        comment_words = comments['comment'][i].lower().split()
         j = 0
         for word in comment_words:
-            indices[i, j] = word_to_index[word]
+            try:
+                indices[i, j] = word_to_vec_idx[word][1]
+            except IndexError:
+                break
+            except KeyError:
+                try:
+                    indices[i, j] = -1
+                except IndexError:
+                    break
             j += 1
 
     return indices
@@ -85,23 +95,23 @@ def comment_to_index(comments, max_len):
 
 # generates a Keras embedding layer, inspired by Emojify in Andrew Ng's Sequence Models Coursera course
 def gen_embedding_layer():
-    setattr(keras.layers.Embedding, '__deepcopy__', lambda self, _: self)
-    path = Path.cwd().parent / "data/glove.42b.300d.txt"
+    path = Path.cwd() / "data/glovetest.txt"
     # path = "/content/Karmalutional-Network/data/glove.42B.300d.txt" - for the notebook
     create_word_to_dicts(path)
     print("gen_embedding_layer\n")
-    input_size = len(word_to_index) + 1  # Keras requires this to be the vocab size + 1
-    output_size = word_to_vector["the"].shape[0]
+    input_size = len(word_to_vec_idx) + 1  # Keras requires this to be the vocab size + 1
+    output_size = word_to_vec_idx["the"][0].shape[0]
 
     embedding_matrix = np.zeros((input_size, output_size))
-    for word, index in word_to_index.items():
-        embedding_matrix[index, :] = word_to_vector[word]
+    for word, lst in word_to_vec_idx.items():
+        index = lst[1]
+        embedding_matrix[index, :] = word_to_vec_idx[word][0]
 
     layer = keras.layers.Embedding(input_size, output_size, trainable=False)
     layer.build((None,))
     layer.set_weights([embedding_matrix])
-    with open('layer.pickle', 'wb') as handle:
-        pickle.dump(layer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    # with open('layer.pickle', 'wb') as handle:
+    #     pickle.dump(layer, handle, protocol=pickle.HIGHEST_PROTOCOL)
     return layer
 
 
