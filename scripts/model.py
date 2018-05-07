@@ -45,7 +45,7 @@ def train_model(inputs, epocs, batch_size, lstm_dim, test):
     model = create_model(lstm_dim, embeddings)
 
     print("compiling\n")
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
     x_train_indices = embedding.comment_to_index(inputs['X_train'], max_len=200)
     print("fitting\n")
