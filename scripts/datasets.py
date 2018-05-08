@@ -12,7 +12,7 @@ def clean_csv(file, print_sub_id = False, output_file = False):
 
     df = df.iloc[1:4, [1, 2, 7]] if print_sub_id else df.iloc[:, [1, 7]] # get only comment and score columns unless specified to get id
     df.rename(columns={'0': 'comment', '1': 'id', '6': 'score'}, inplace=True)
-
+   
     df = df.dropna(axis=0, how='any')  # delete any row with no data in either column
     df = df[~df.comment.str.contains('|'.join(['removed', 'deleted']))]  # delete rows with 'removed' or 'deleted' comments
 
