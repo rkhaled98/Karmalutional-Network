@@ -51,25 +51,23 @@ from googleapiclient.http import MediaIoBaseDownload
 # and the Emojify exercise from Andrew Ng's course on sequence models
 # word_to_index = {}
 # word_to_vector = {}  # not to be confused with word2vec
-word_to_vec_idx = {}
+word_to_idx = {}
 
 
-# open the file:
-def create_word_to_dicts(file):
+def gen_embedding_matrix(file, input_shape, output_shape):
+    embedding_matrix = np.zeros((input_shape, output_shape))
     with open(file) as f:
-        print("gen embeddings\n")
+        print("gen embedding matrix\n")
         i = 0
         for line in f:
             split_line = line.split()
             word = split_line[0]
             weights = np.asarray(split_line[1:])
-            # store the weight vector at the appropriate index:
-            word_to_vec_idx[word] = [weights, i]
-            # word_to_vector[word] = weights
-            # word_to_index[word] = i
-            i += 1  # no ++ in python
-        weight_shape = word_to_vec_idx["the"][0].shape
-        word_to_vec_idx["unk"] = [np.zeros(weight_shape), i]
+            word_to_idx[word] = i
+            embedding_matrix[i, :] = weights
+            i += 1
+        word_to_idx["unk"] = i
+        return embedding_matrix
 
 
 def comment_to_index(comments, max_len):
@@ -82,10 +80,10 @@ def comment_to_index(comments, max_len):
         j = 0
         for word in comment_words:
             try:
-                indices[i, j] = word_to_vec_idx[word][1]
+                indices[i, j] = word_to_idx[word]
             except (KeyError, IndexError):
                 try:
-                    indices[i, j] = word_to_vec_idx["unk"][1]
+                    indices[i, j] = word_to_idx["unk"]
                 except IndexError:
                     continue
             j += 1
@@ -97,22 +95,13 @@ def comment_to_index(comments, max_len):
 def gen_embedding_layer():
     path = Path.cwd() / "data/glove.42B.300d.txt"
     # path = "/content/Karmalutional-Network/data/glove.42B.300d.txt" - for the notebook
-    create_word_to_dicts(path)
-    print("gen_embedding_layer\n")
-    input_size = len(word_to_vec_idx) + 1  # Keras requires this to be the vocab size + 1
-    output_size = word_to_vec_idx["the"][0].shape[0]
-
-    embedding_matrix = np.zeros((input_size, output_size))
-
-    for word, lst in word_to_vec_idx.items():
-        index = lst[1]
-        embedding_matrix[index, :] = word_to_vec_idx[word][0]
-
+    input_size = 1917496
+    output_size = 300
+    embedding_matrix = gen_embedding_matrix(path, input_size, output_size)
+    print("gen embedding layer\n")
     layer = keras.layers.Embedding(input_size, output_size, trainable=False)
     layer.build((None,))
     layer.set_weights([embedding_matrix])
-    # with open('layer.pickle', 'wb') as handle:
-    #     pickle.dump(layer, handle, protocol=pickle.HIGHEST_PROTOCOL)
     return layer
 
 
