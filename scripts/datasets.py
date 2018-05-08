@@ -1,9 +1,8 @@
 import pandas as pd
 import praw
 import numpy as np
-import matplotlib
+#import matplotlib
 import seaborn as sns
-import matplotlib.pyplot as plt
 
 
 def clean_csv(file, print_sub_id = False, output_file = False):
@@ -21,10 +20,6 @@ def clean_csv(file, print_sub_id = False, output_file = False):
         reddit = login(password)
         df[['id']] = df.id.apply(lambda id: convert_comment_id_to_submission_id(id, reddit))
 
-    if output_file: # if executed, write DataFrame to new csv file
-        f = open(str(file.replace(".csv", ".out")), 'w')
-        f.write(df.to_csv())
-
     return df
 
 
@@ -35,7 +30,7 @@ def clean_csv(file, print_sub_id = False, output_file = False):
 #     return count
 
 
-def get_input_df_with_labels(df):
+def get_input_df_with_labels(df, file, output_file=True):
     # the df above was already parsed with clean_csv...
     # with the format ,comment,id,score.
     # the output return of this function is a DataFrame which represents the
@@ -44,14 +39,18 @@ def get_input_df_with_labels(df):
     df = df.loc[:, ['comment', 'score']] # order by comment,score
     #df['rank'] = df.score.apply(lambda score: get_single_classifier_for_score(score, df.score))
     df['rank'] = df.score.apply(lambda score: get_percentile_for_score(score, df.score))
+    if output_file: # if executed, write DataFrame to new csv file
+        f = open(str(file.replace(".csv", ".out")), 'w')
+        f.write(df.to_csv())
+        f.close()
     return df
 
 
 def get_percentile_for_score(score, all_scores):
     i = 90
-    while i != 10:
+    while i != -10:
         if score > np.percentile(all_scores, i):
-            return i
+            return float(i / 100)
         i -= 10
 
 
@@ -107,9 +106,12 @@ def plot_pints(df):
 
 
 def get_sets(file):
-    print("get_sets..")
-    df = clean_csv(file)
-    df = get_input_df_with_labels(df)
+    print("get sets")
+    if file.split('.')[1] == "out":
+        df = pd.read_csv(file)
+    else:
+        df = clean_csv(file)
+        df = get_input_df_with_labels(df, file)
     return train_test_sets(df, 0.9)  #90 percent train
 
 
@@ -126,18 +128,19 @@ def convert_comment_id_to_submission_id(comment_id, reddit): # attempt to get th
     except Exception as e:
         return "fail"
 
-def plot_data(file):
-    df = clean_csv(file)
-    sns.set_style("whitegrid")
-    ax = plt.subplot(111)
-    ax = sns.violinplot(x=df["score"])
-    ax.set_xlim([0, 1200])
-    plt.show()
+
+# def plot_data(file):
+#     df = clean_csv(file)
+#     sns.set_style("whitegrid")
+#     ax = plt.subplot(111)
+#     ax = sns.violinplot(x=df["score"])
+#     ax.set_xlim([0, 1200])
+#     plt.show()
 
     #km = KMeans()
     #km.fit(df["score"].reshape(-1,1))
 
-    print(df)
+    #print(df)
     '''
     df = clean_csv(file)
     df = df.loc[:, ['score']]

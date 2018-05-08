@@ -1,8 +1,10 @@
 from tensorflow import keras
-from scripts import datasets
-from scripts import embedding
+import datasets
+import embedding
+import tensorflow as tf
 import os
-import pathlib
+from pathlib import Path
+import pickle
 
 
 # def run_model_from_file_input():
@@ -15,15 +17,16 @@ import pathlib
 
 def run_model_from_file(file):
     inputs = datasets.get_sets(file)
-    train_model(inputs, epocs=32, batch_size=50, lstm_dim=128, test=True)
+    train_model(inputs, epocs=32, batch_size=10, lstm_dim=128, test=True)
 
 
 def create_model(lstm_dim, embeddings):
     # Input pretrained Keras embeddings, builds Keras model
-    print("Model Starting\n")
-    inputs = keras.Input(shape=(50,), dtype='int32')
+    print("model starting\n")
+    inputs = keras.Input(shape=(200,), dtype='int32')
     embeddings = embeddings(inputs)
     X = keras.layers.LSTM(lstm_dim, return_sequences=False)(embeddings)
+    X = keras.layers.Dense(1)(X)
     X = keras.layers.Activation('sigmoid')(X)
 
     model = keras.Model(inputs=inputs, outputs=X)
@@ -33,26 +36,26 @@ def create_model(lstm_dim, embeddings):
 
 def train_model(inputs, epocs, batch_size, lstm_dim, test):
     # Trains model and evaluates on test set if 'test' is true
-    print("trian model starting\n")
+    print("train model starting\n")
     embeddings = embedding.gen_embedding_layer()
     model = create_model(lstm_dim, embeddings)
 
-    print("compiling and fitting\n")
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    print("compiling\n")
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    x_train_indices = embedding.comment_to_index(inputs['X_train'], max_len=100)
-    model.fit(x_train_indices, inputs['Y_train'], epocs=epocs, batch_size=batch_size, shuffle=True)
+    x_train_indices = embedding.comment_to_index(inputs['X_train'], max_len=200)
+    print("fitting\n")
+    model.fit(x_train_indices, inputs['Y_train']['rank'], epochs=epocs, batch_size=batch_size, verbose=1, shuffle=True)
     if test:
-        x_test_indices = embedding.comment_to_index(inputs['X_test'], max_len=100)
+        print("testing\n")
+        x_test_indices = embedding.comment_to_index(inputs['X_test'], max_len=200)
         loss, acc = model.evaluate(x_test_indices, inputs['Y_test'])
         print(acc)
 
 
 def main():
-    path = os.path.dirname(os.path.abspath(__file__))
-    path = str(pathlib.PurePath(path).parent)
-    path += "/data/news_first50.csv"
-    run_model_from_file(path)
+    path = Path.cwd() / "data/news_news.out"
+    run_model_from_file(str(path))
 
 
 if __name__ == "__main__":
