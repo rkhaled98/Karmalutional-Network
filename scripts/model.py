@@ -1,10 +1,7 @@
 from tensorflow import keras
 import datasets
 import embedding
-import tensorflow as tf
-import os
 from pathlib import Path
-import pickle
 
 
 # def run_model_from_file_input():
@@ -17,7 +14,7 @@ import pickle
 
 def run_model_from_file(file):
     inputs = datasets.get_sets(file)
-    train_model(inputs, epocs=32, batch_size=10, lstm_dim=128, test=True)
+    train_model(inputs, epocs=32, batch_size=10, lstm_dim=350, test=True)
 
 
 def create_model(lstm_dim, embeddings):
@@ -26,6 +23,7 @@ def create_model(lstm_dim, embeddings):
     inputs = keras.Input(shape=(200,), dtype='int32')
     embeddings = embeddings(inputs)
     X = keras.layers.LSTM(lstm_dim, return_sequences=False)(embeddings)
+    X = keras.layers.Dropout(0.5)(X)
     X = keras.layers.Dense(1)(X)
     X = keras.layers.Activation('sigmoid')(X)
 
@@ -41,7 +39,7 @@ def train_model(inputs, epocs, batch_size, lstm_dim, test):
     model = create_model(lstm_dim, embeddings)
 
     print("compiling\n")
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
 
     x_train_indices = embedding.comment_to_index(inputs['X_train'], max_len=200)
     print("fitting\n")
