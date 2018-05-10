@@ -29,7 +29,7 @@ from tensorflow import keras
 # getting the glove file
 
 import io
-from googleapiclient.http import MediaIoBaseDownload
+# from googleapiclient.http import MediaIoBaseDownload
 
 # file_id = '18DZMqkgq5_nXgDEk9zc1HT7twmLuMEBk'
 # request = drive_service.files().get_media(fileId = file_id)
