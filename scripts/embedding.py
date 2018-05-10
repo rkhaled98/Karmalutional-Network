@@ -14,6 +14,8 @@ from pathlib import Path
 from tensorflow import keras
 # from google.colab import files
 
+import os
+
 # note: this causes the environment to crash and restart with such a huge file. for now, we are just using wget instead of Google Drive.
 # wget is surprisingly fast for this task, possibly moreso than Google Drive would be.
 
@@ -94,10 +96,11 @@ def comment_to_index(comments, max_len):
 # generates a Keras embedding layer, inspired by Emojify in Andrew Ng's Sequence Models Coursera course
 def gen_embedding_layer():
     path = Path.cwd() / "data/glove.42B.300d.txt"
+    path_for_rafi = os.getcwd() + "/data/glove.42B.300d.txt" # use instead on linux operating system
     # path = "/content/Karmalutional-Network/data/glove.42B.300d.txt" - for the notebook
     input_size = 1917496
     output_size = 300
-    embedding_matrix = gen_embedding_matrix(path, input_size, output_size)
+    embedding_matrix = gen_embedding_matrix(path_for_rafi, input_size, output_size)
     print("gen embedding layer\n")
     layer = keras.layers.Embedding(input_size, output_size, trainable=False)
     layer.build((None,))
