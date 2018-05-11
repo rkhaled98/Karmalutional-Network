@@ -41,9 +41,16 @@ def get_input_df_with_labels(df, file, output_file=True):
     #df['rank'] = df.score.apply(lambda score: get_single_classifier_for_score(score, df.score))
     df['rank'] = df.score.apply(lambda score: get_percentile_for_score(score, df.score))
     df = df.loc[:, ['comment', 'rank']]
+    df.set_index('comment', inplace=True)
     if output_file: # if executed, write DataFrame to new csv file
-        f = open(str(file.replace(".csv", ".out")), 'w')
+        filename = str(file.replace(".csv", ".out"))
+        f = open(filename, 'w')
         f.write(df.to_csv())
+        with open(filename, 'r') as istr:
+             with open(filename + "final", 'w') as ostr:
+               for line in istr:
+                 line = line.rstrip('\n') + ','
+                 print(line, file=ostr)
         f.close()
    
     return df
@@ -127,12 +134,11 @@ def convert_comment_id_to_submission_id(comment_id, reddit): # attempt to get th
         return "fail"
 
 def main():
-    df = clean_csv(os.getcwd() + '/data/news_news_small.csv')
-    df = get_input_df_with_labels(df, os.getcwd() + '/data/news_news_small.out', output_file = True)
+    df = clean_csv(os.getcwd() + '/data/news_news_small_test.csv')
+    df = get_input_df_with_labels(df, os.getcwd() + '/data/news_news_small_test.out', output_file = True)
     print(df)
 
 main()
-
 
 
 # def plot_data(file):
