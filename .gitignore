@@ -108,3 +108,5 @@ venv.bak/
 .vscode/
 data/glove.42B.300d.zip
 data/glove.42B.300d.txt
+data/glove.6B.50d.zip
+data/glove.6B.50d.txt
