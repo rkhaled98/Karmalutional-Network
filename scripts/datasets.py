@@ -3,6 +3,7 @@ import praw
 import numpy as np
 #import matplotlib
 import seaborn as sns
+import os
 
 
 def clean_csv(file, print_sub_id = False, output_file = False):
@@ -39,10 +40,12 @@ def get_input_df_with_labels(df, file, output_file=True):
     df = df.loc[:, ['comment', 'score']] # order by comment,score
     #df['rank'] = df.score.apply(lambda score: get_single_classifier_for_score(score, df.score))
     df['rank'] = df.score.apply(lambda score: get_percentile_for_score(score, df.score))
+    df = df.loc[:, ['comment', 'rank']]
     if output_file: # if executed, write DataFrame to new csv file
         f = open(str(file.replace(".csv", ".out")), 'w')
         f.write(df.to_csv())
         f.close()
+   
     return df
 
 
@@ -50,7 +53,8 @@ def get_percentile_for_score(score, all_scores):
     i = 90
     while i != -10:
         if score > np.percentile(all_scores, i):
-            return float(i / 100)
+            return str(float(i / 100))[2:]
+            # return float(i / 100) -> previous version
         i -= 10
 
 
@@ -115,18 +119,20 @@ def get_sets(file):
     return train_test_sets(df, 0.9)  #90 percent train
 
 
-def login(password): # login as username karmalutionalNetwork
-    return praw.Reddit(client_id='wBnuJlXAeHDnKQ',
-                       client_secret='BE_SL0MrlgAtKktUGGFYI_RXtjc', password=password,
-                       user_agent='karmalutionalNetwork', username='karmalutionalNetwork')
-
-
 def convert_comment_id_to_submission_id(comment_id, reddit): # attempt to get thread id
     try:
         submission_id = reddit.comment(id=comment_id).submission
         return submission_id
     except Exception as e:
         return "fail"
+
+def main():
+    df = clean_csv(os.getcwd() + '/data/news_news_small.csv')
+    df = get_input_df_with_labels(df, os.getcwd() + '/data/news_news_small.out', output_file = True)
+    print(df)
+
+main()
+
 
 
 # def plot_data(file):
@@ -141,7 +147,7 @@ def convert_comment_id_to_submission_id(comment_id, reddit): # attempt to get th
     #km.fit(df["score"].reshape(-1,1))
 
     #print(df)
-    '''
+'''
     df = clean_csv(file)
     df = df.loc[:, ['score']]
     sns.set_style("whitegrid")
@@ -155,3 +161,8 @@ def convert_comment_id_to_submission_id(comment_id, reddit): # attempt to get th
     '''
 
 #plot_data('./news_news.csv')
+
+# def login(password): # login as username karmalutionalNetwork
+#     return praw.Reddit(client_id='wBnuJlXAeHDnKQ',
+#                        client_secret='BE_SL0MrlgAtKktUGGFYI_RXtjc', password=password,
+#                        user_agent='karmalutionalNetwork', username='karmalutionalNetwork')
