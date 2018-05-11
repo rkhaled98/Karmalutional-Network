@@ -12,7 +12,7 @@ def clean_csv(file, print_sub_id = False, output_file = False):
 
     df = df.iloc[1:4, [1, 2, 7]] if print_sub_id else df.iloc[:, [1, 7]] # get only comment and score columns unless specified to get id
     df.rename(columns={'0': 'comment', '1': 'id', '6': 'score'}, inplace=True)
-   
+
     df = df.dropna(axis=0, how='any')  # delete any row with no data in either column
     df = df[~df.comment.str.contains('|'.join(['removed', 'deleted']))]  # delete rows with 'removed' or 'deleted' comments
 
@@ -52,7 +52,7 @@ def get_input_df_with_labels(df, file, output_file=True):
                  line = line.rstrip('\n') + ','
                  print(line, file=ostr)
         f.close()
-   
+
     return df
 
 
@@ -124,6 +124,12 @@ def get_sets(file):
         df = clean_csv(file)
         df = get_input_df_with_labels(df, file)
     return train_test_sets(df, 0.9)  #90 percent train
+
+
+def login(password): # login as username karmalutionalNetwork
+    return praw.Reddit(client_id='wBnuJlXAeHDnKQ',
+                       client_secret='BE_SL0MrlgAtKktUGGFYI_RXtjc', password=password,
+                       user_agent='karmalutionalNetwork', username='karmalutionalNetwork')
 
 
 def convert_comment_id_to_submission_id(comment_id, reddit): # attempt to get thread id
