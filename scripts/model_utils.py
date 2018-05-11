@@ -125,4 +125,15 @@ def predict(X, Y, W, b, word_to_vec_map, output_prediction = False):
     
     return pred
 
+def predict_one(X, W, b, word_to_vec_map):
+    words = X.lower().split()
+    avg = np.zeroes((50,))
+    for w in words:
+        avg += word_to_vec_map[w]
+    avg = avg/len(words)
+    Z = np.dot(W, avg) + b
+    A = softmax(Z)
+    pred = np.argmax(A)
+    print("The model predicts that the comment: \n'%s'\n will receive a relative score ranking of: %s" % (X, pred))
+
 # read_glove_vecs('data/glove.42B.300d.txt')
