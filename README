@@ -1,0 +1,51 @@
+Karmalutional Network
+By Rafi Khaled, Colburn Morrison, Nanak Nihal Khalsa, and Jo Hsuan Lee
+
+Unlike the name implies, this model does not use a convolutional network.
+However, it is arguably catchy so it has been kept. It uses a recurrent
+neural network. Recurrent neural networks are different than feedforward
+neural networks becuase they involve feeding their output as input to
+themselves. However, in many ways, they are similar to feedforward neural
+networks. 
+
+Feedforward neural networks consist of non-linear transformations of an input
+matrix into an output matrix. They can be thought of as having layers. The
+first layer in a neural network is called the input layer, the last is called
+the output layer, and anything between is a hidden layer. Each layer passes
+its output to each node in the next layer. Layers can be thought of as
+consisting of nodes, which are often visualised in columns (see NN.png for a
+diagram). Each nodes represents a weight value and a bias value. The inputs
+to any node are added together and then multiplied by the weight. Then, 
+bias is added to them. The resulting value is given as input to a nonlinear
+function such as the sigmoid or ReLU function, and the resulting value is
+considered the output of the node.
+
+Non-linearity is important because it gives the network the ability to
+approximate highly complex, non-linear functions. It's a mystery how neural
+networks can approximate so many functions with such high accuracy, but it's
+certain that they would only be able to approximate linear functions if their
+activation functions weren't nonlinear. 
+
+Computationally, the nodes are not treated as individual entities. The concept
+of nodes are primarily useful for human understanding. Computationally, layers
+ of m nodes are treated as two matrices: one 1xm column vector of biases and 
+another a nxm matrix where n is the number of outputs from the previous layer.
+the 1xn output from the previous layer is multiplied by the mxn weights to get
+a 1xm matrix to which the 1xm biases are added. To each value in the
+resulting 1xm matrix, a non-linear activation function is applied. The 
+resulting 1xm matrix is passed as input to the next layer, if there is a next
+layer. Otherwise, it's the output of the network. Not every type of neural
+network works exactly like this but it is a common architecture. 
+
+The above is how a standard feedforward neural network computes output values
+from input values. This is called forward propagation. However, in order to 
+train the network to get appropriate weights and biases to acheive a desirable
+output, backpropagation is used.
+
+Backpropagation is possible when the desired output (the output could be in
+the form of 1 or 0 meaning cat or non-cat) for any input (the input could be
+an image that may or may not contain a cat) is known. Backpropagation is not
+possible if the activation functions are non-differentiable, however networks
+rarely use non-differentiable activation functions. 
+
+Backpropagation consists of 
