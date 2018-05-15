@@ -1,6 +1,12 @@
 Karmalutional Network
 By Rafi Khaled, Colburn Morrison, Nanak Nihal Khalsa, and Jo Hsuan Lee
 
+This is a neural network that predicts reddit comment popularity. It outputs
+a value from 1-5 with 50% test set accuracy. An output of  1 represents a
+ comment below the 20th percentile of scores.A 2 represents a comment >= 20th
+and < the 40th percentiles of scores. A 5 represents a comment >= the 80th
+ percentile. 
+
 Unlike the name implies, this model does not use a convolutional network.
 However, it is arguably catchy so it has been kept. It uses a recurrent
 neural network. Recurrent neural networks are different than feedforward
@@ -12,9 +18,9 @@ Feedforward neural networks consist of non-linear transformations of an input
 matrix into an output matrix. They can be thought of as having layers. The
 first layer in a neural network is called the input layer, the last is called
 the output layer, and anything between is a hidden layer. Each layer passes
-its output to each node in the next layer. Layers can be thought of as
+its output to the next layer. Layers can be thought of as
 consisting of nodes, which are often visualised in columns (see NN.png for a
-diagram). Each nodes represents a weight value and a bias value. The inputs
+diagram). Each node represents a weight value and a bias value. The inputs
 to any node are added together and then multiplied by the weight. Then, 
 bias is added to them. The resulting value is given as input to a nonlinear
 function such as the sigmoid or ReLU function, and the resulting value is
@@ -48,4 +54,32 @@ an image that may or may not contain a cat) is known. Backpropagation is not
 possible if the activation functions are non-differentiable, however networks
 rarely use non-differentiable activation functions. 
 
-Backpropagation consists of 
+One step in backpropagation is comparing the output of the network for a given
+input to the desired output for that input. It uses a loss function to
+determine a single number that represents how close the output matches the
+desired output. The next goal is to minimize this loss function. The network
+does this by computing the derivative of the function w.r.t the weights and
+w.r.t the biases. It takes the derivative at the current value and uses this
+to determine how much to change the current weight or bias in question by. 
+This is done by 
+w = w - learning_rate * dJ(w)/dw and 
+b = b - learning_rate * dJ(b)/db, 
+where w is a weight and b is a bias. with a greater learning_rate, the
+network will learn faster but may skip over the minimum by subtracting too
+much. 
+
+In a nutshell, this is how neural networks work. However, there are more
+specifics and variations of this design that have not been covered.
+
+RNNs are based on the idea that previous outputs should be incorporated in the
+current input. An example of where this is helpful is natural language
+processing. Consider somebody saying "The beach has red sand, which is a
+result of high iron concentration." Now consider somebody saying "That was a
+delicious sandwich." The network should not transcribe sand, which as
+sandwich, nor should it transcribe sandwich as sand, which. It needs previous
+words to better determine the meaning of the current word. Reddit comments
+are similar; the meaning of a current word also depends on the meaning of
+ previous words. Recurrent neural networks have been shown to be effective at
+NLP tasks such as understanding text. 
+
+The specific type of RNN used for this project is a LSTM. 
