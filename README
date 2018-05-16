@@ -2,9 +2,9 @@ Karmalutional Network
 By Rafi Khaled, Colburn Morrison, Nanak Nihal Khalsa, and Jo Hsuan Lee
 
 This is a neural network that predicts reddit comment popularity. It outputs
-a value from 1-5 with 50% test set accuracy. An output of  1 represents a
- comment below the 20th percentile of scores.A 2 represents a comment >= 20th
-and < the 40th percentiles of scores. A 5 represents a comment >= the 80th
+a value from 1-10 with 50% test set accuracy. An output of  1 represents a
+ comment below the 10th percentile of scores.A 2 represents a comment >= 10th
+and < the 20th percentiles of scores. A 10 represents a comment >= the 90th
  percentile. 
 
 Unlike the name implies, this model does not use a convolutional network.
