@@ -29,5 +29,3 @@ RNNs are based on the idea that previous outputs should be incorporated in the c
 delicious sandwich." The network should not transcribe sand, which as sandwich, nor should it transcribe sandwich as sand, which. It needs previous words to better determine the meaning of the current word. Reddit comments are similar; the meaning of a current word also depends on the meaning of previous words. Recurrent neural networks have been shown to be effective at
 NLP tasks such as understanding text. 
 
-The specific type of RNN used for this project is a LSTM. 
-
