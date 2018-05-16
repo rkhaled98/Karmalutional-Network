@@ -31,4 +31,3 @@ NLP tasks such as understanding text.
 
 The specific type of RNN used for this project is a LSTM. LSTM, or Long Short-Term memory, nodes are a type of node in RNNs that allow the network to 'remember' longer-term dependencies in sentences. LSTMs work, in a broad sense, by computing for each node the probability that node should update its value based on the previous nodes' output. This update does not happen every time, so various characteristics are "remembered" throughout the network, for example noun-verb agreements. Furthermore, since values aren't changing as often, the possibly for vanishing gradients decreases.
 
-
