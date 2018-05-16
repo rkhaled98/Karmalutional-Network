@@ -1,85 +1,33 @@
 Karmalutional Network
 By Rafi Khaled, Colburn Morrison, Nanak Nihal Khalsa, and Jo Hsuan Lee
 
-This is a neural network that predicts reddit comment popularity. It outputs
-a value from 1-10 with 50% test set accuracy. An output of  1 represents a
- comment below the 10th percentile of scores.A 2 represents a comment >= 10th
-and < the 20th percentiles of scores. A 10 represents a comment >= the 90th
- percentile. 
+This is a neural network that predicts reddit comment popularity. It outputs a value from 1-10 with 50% test set accuracy. An output of  1 represents a comment below the 10th percentile of scores. By the same token, a 2 represents a comment that is >= 10th and < the 20th percentiles; a 10 represents a comment >= the 90th percentile. 
 
-Unlike the name implies, this model does not use a convolutional network.
-However, it is arguably catchy so it has been kept. It uses a recurrent
-neural network. Recurrent neural networks are different than feedforward
-neural networks becuase they involve feeding their output as input to
-themselves. However, in many ways, they are similar to feedforward neural
-networks. 
 
-Feedforward neural networks consist of non-linear transformations of an input
-matrix into an output matrix. They can be thought of as having layers. The
-first layer in a neural network is called the input layer, the last is called
-the output layer, and anything between is a hidden layer. Each layer passes
-its output to the next layer. Layers can be thought of as
-consisting of nodes, which are often visualised in columns (see NN.png for a
-diagram). Each node represents a weight value and a bias value. The inputs
-to any node are added together and then multiplied by the weight. Then, 
-bias is added to them. The resulting value is given as input to a nonlinear
-function such as the sigmoid or ReLU function, and the resulting value is
-considered the output of the node.
+Unlike the name implies, this model does not use a convolutional network. However, it is arguably catchy so it has been kept. Instead, it uses a recurrent neural network. Recurrent neural networks are different than feedforward neural networks because they involve feeding their outputs as inputs to themselves. However, in many ways, they are similar to feedforward neural networks. 
 
-Non-linearity is important because it gives the network the ability to
-approximate highly complex, non-linear functions. It's a mystery how neural
-networks can approximate so many functions with such high accuracy, but it's
-certain that they would only be able to approximate linear functions if their
-activation functions weren't nonlinear. 
+Feedforward neural networks consist of non-linear transformations of an input matrix into an output matrix. They can be thought of as having layers. The first layer in a neural network is called the input layer, the last is called the output layer, and anything between is a hidden layer. Each layer passes
+its output to the next layer. A layer can be thought of as an arrangement of nodes, often visualized in columns (see NN.png for a diagram). Each node represents a weight value and a bias value. The inputs to any node are added together and multiplied by the weight before a bias is added to them. The resulting value is passed into a nonlinear function, such as the sigmoid or ReLU function, and the result is considered the output of the node, and the input for the next.
 
-Computationally, the nodes are not treated as individual entities. The concept
-of nodes are primarily useful for human understanding. Computationally, layers
- of m nodes are treated as two matrices: one 1xm column vector of biases and 
-another a nxm matrix where n is the number of outputs from the previous layer.
-the 1xn output from the previous layer is multiplied by the mxn weights to get
-a 1xm matrix to which the 1xm biases are added. To each value in the
-resulting 1xm matrix, a non-linear activation function is applied. The 
-resulting 1xm matrix is passed as input to the next layer, if there is a next
-layer. Otherwise, it's the output of the network. Not every type of neural
-network works exactly like this but it is a common architecture. 
+Non-linearity is important because it allows the network to process highly complex neuron networks. It is a mystery how neural networks can approximate outputs through a series of transformation functions with such high accuracy, but it is certain that they would only be able to approximate simple networks without nonlinear activation functions between the layers. 
 
-The above is how a standard feedforward neural network computes output values
-from input values. This is called forward propagation. However, in order to 
-train the network to get appropriate weights and biases to acheive a desirable
-output, backpropagation is used.
+Computationally, the nodes are not treated as individual entities. The concept of nodes is primarily used for human understanding. Computationally, layers of m nodes are treated as two matrices: one (1 x m) column vector of biases and another (n x m) matrix, where n is the number of outputs from the previous layer.
+The output (1 x n) matrix from the previous layer is multiplied by (m x n) weights to result in a (1 x m) matrix, to which the (1 x m) biases are added. To each value in the resulting (1 x m) matrix, a non-linear activation function is applied and passed in again as the input to the next hidden layer if there is one. Otherwise, it is the output of the network. This is a common architecture for a feedforward network, yet there are exceptions. 
 
-Backpropagation is possible when the desired output (the output could be in
-the form of 1 or 0 meaning cat or non-cat) for any input (the input could be
-an image that may or may not contain a cat) is known. Backpropagation is not
-possible if the activation functions are non-differentiable, however networks
-rarely use non-differentiable activation functions. 
+The above is a standard feedforward neural network computation, widely known as Forward Propagation. However, in order to train a more accurate network, we need Backward Propagation, or Back Prop, to achieve the appropriate weights and biases.
 
-One step in backpropagation is comparing the output of the network for a given
-input to the desired output for that input. It uses a loss function to
-determine a single number that represents how close the output matches the
-desired output. The next goal is to minimize this loss function. The network
-does this by computing the derivative of the function w.r.t the weights and
-w.r.t the biases. It takes the derivative at the current value and uses this
-to determine how much to change the current weight or bias in question by. 
-This is done by 
+Back Prop is possible when the desired output (i.e. 1 or 0, cat or non-cat) for any input (i.e. an image that may or may not contain a cat) is known. On the flip side, Back Prop is not possible if the activation functions are non-differentiable, hence networks rarely use non-differentiable activation functions. 
+
+One step in Back Prop is comparing the output of the network for a given input to the desired output for that input. It uses the "loss function" to determine a number that represents how close the output matches the desired output, and our goal is to minimize this loss function. The network does this by computing the derivative of the function with respect to the weights and another with respect to the biases. It takes the derivative at the current value and uses this to determine how much to change the current weight or bias in question by. This is done by 
 w = w - learning_rate * dJ(w)/dw and 
 b = b - learning_rate * dJ(b)/db, 
-where w is a weight and b is a bias. with a greater learning_rate, the
-network will learn faster but may skip over the minimum by subtracting too
-much. 
+where w is a weight and b is a bias. With a greater learning_rate, the network will learn faster but may skip over the minimum by subtracting too much. 
 
-In a nutshell, this is how neural networks work. However, there are more
-specifics and variations of this design that have not been covered.
+In a nutshell, this is how neural networks work. However, there are more specifics and variations of this design that have not been covered.
 
-RNNs are based on the idea that previous outputs should be incorporated in the
-current input. An example of where this is helpful is natural language
-processing. Consider somebody saying "The beach has red sand, which is a
-result of high iron concentration." Now consider somebody saying "That was a
-delicious sandwich." The network should not transcribe sand, which as
-sandwich, nor should it transcribe sandwich as sand, which. It needs previous
-words to better determine the meaning of the current word. Reddit comments
-are similar; the meaning of a current word also depends on the meaning of
- previous words. Recurrent neural networks have been shown to be effective at
+RNNs are based on the idea that previous outputs should be incorporated in the current input. An example of where this is helpful is natural language processing. Consider somebody saying "The beach has red sand, which is a result of high iron concentration." Now consider somebody saying "That was a
+delicious sandwich." The network should not transcribe sand, which as sandwich, nor should it transcribe sandwich as sand, which. It needs previous words to better determine the meaning of the current word. Reddit comments are similar; the meaning of a current word also depends on the meaning of previous words. Recurrent neural networks have been shown to be effective at
 NLP tasks such as understanding text. 
 
 The specific type of RNN used for this project is a LSTM. 
+
