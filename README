@@ -29,5 +29,6 @@ RNNs are based on the idea that previous outputs should be incorporated in the c
 delicious sandwich." The network should not transcribe sand, which as sandwich, nor should it transcribe sandwich as sand, which. It needs previous words to better determine the meaning of the current word. Reddit comments are similar; the meaning of a current word also depends on the meaning of previous words. Recurrent neural networks have been shown to be effective at
 NLP tasks such as understanding text. 
 
-The specific type of RNN used for this project is a LSTM. 
+The specific type of RNN used for this project is a LSTM. LSTM, or Long Short-Term memory, nodes are a type of node in RNNs that allow the network to 'remember' longer-term dependencies in sentences. LSTMs work, in a broad sense, by computing for each node the probability that node should update its value based on the previous nodes' output. This update does not happen every time, so various characteristics are "remembered" throughout the network, for example noun-verb agreements. Furthermore, since values aren't changing as often, the possibly for vanishing gradients decreases.
+
 
