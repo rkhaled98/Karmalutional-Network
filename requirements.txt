@@ -4,5 +4,3 @@ pandas
 praw
 matplotlib
 seaborn
-matplotlib
-
